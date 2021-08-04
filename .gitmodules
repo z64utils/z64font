@@ -1,0 +1,3 @@
+[submodule "wowlib"]
+	path = wowlib
+	url = https://github.com/z64me/wowlib
