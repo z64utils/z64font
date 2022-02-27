@@ -268,7 +268,10 @@ int wow_main(argc, argv)
 					ofn = wowGui_askFilename("font_static,h,png", 0, 1);
 					if (ofn)
 					{
-						z64font_exportDecomp(&g, &ofn);
+						if (g.isDecompMode)
+							z64font_exportDecomp(&g, &ofn);
+						else
+							z64font_exportBinaries(&g, &ofn);
 						free(ofn);
 					}
 				}
