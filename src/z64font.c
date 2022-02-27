@@ -176,6 +176,7 @@ void z64font_exportDecomp(struct z64font *g, char **ofn)
 	const char *delim = "\r\n";
 	char *pngFn = 0;
 	char *decompFileNames = strdup(g->decompFileNames);
+	unsigned char rgbaBuf[FONT_W * FONT_H][4];
 	const float extraWidthEntries[] = {
 		14.0f, // '[A]'
 		14.0f, // '[B]'
@@ -203,7 +204,13 @@ void z64font_exportDecomp(struct z64font *g, char **ofn)
 
 	for (zchar = g->zchar; zchar->bitmap; ++zchar)
 	{
-		stbi_write_png(pngFn, FONT_W, FONT_H, 1, zchar->bitmap, FONT_W * 1);
+		/* convert i8 to rgba32 */
+		for (int i = 0; i < FONT_W * FONT_H; ++i)
+		{
+			rgbaBuf[i][0] = rgbaBuf[i][1] = rgbaBuf[i][2] = ((unsigned char *)zchar->bitmap)[i]; /* rgb */
+			rgbaBuf[i][3] = 255; /* a */
+		}
+		stbi_write_png(pngFn, FONT_W, FONT_H, 4, rgbaBuf, FONT_W * 4);
 		pngFn = strtok(0, delim);
 	}
 
