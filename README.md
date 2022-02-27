@@ -53,7 +53,7 @@ further than [`z64decompress`](https://github.com/z64me/z64decompress).
 
 ### [OoT decomp](https://github.com/zeldaret/oot)
 To export for OoT decomp first make sure `decompMode` is checked.
-You must provide a text file with the names of the png files to export. An `oot_decomp_fn.txt` is included already.
+You must provide a text file with the names of the png files to export. An [`oot_decomp_fn.txt`](https://raw.githubusercontent.com/z64me/z64font/main/codepoints/oot_decomp_fn.txt) is included already.
 
 Once you are happy with how your font is displaying in the preview window,
 click the `Export Decomp` button. You will be prompted to select a
