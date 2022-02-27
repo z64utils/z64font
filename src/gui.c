@@ -11,8 +11,8 @@
 
 #define  WINW 440
 #define  WINH 440
-#define  PREVIEW_X (16)   /* window coordinates at which    */
-#define  PREVIEW_Y (128)  /* to display text preview        */
+#define  PREVIEW_X (16)      /* window coordinates at which    */
+#define  PREVIEW_Y (128+24)  /* to display text preview        */
 
 static void i8_to_rgba32(
 	unsigned char *dst
@@ -166,13 +166,15 @@ int wow_main(argc, argv)
 		if (wowGui_window(&win))
 		{
 			wowGui_row_height(20);
-			wowGui_columns(1);
-			
-			wowGui_column_width(8 * sizeof(PROG_NAME_VER_ATTRIB));
+			wowGui_columns(2);
+
+			wowGui_column_width(WINW / 2);
 			wowGui_italic(2);
 			wowGui_label(PROG_NAME_VER_ATTRIB);
 			wowGui_italic(0);
-			
+
+			wowGui_checkbox("decompMode", &g.isDecompMode);
+
 			/* file droppers */
 			wowGui_columns(3);
 			static struct wowGui_fileDropper ttfFile = {
@@ -206,6 +208,24 @@ int wow_main(argc, argv)
 				changed = 1;
 			}
 			
+			static struct wowGui_fileDropper decompFileNamesFile = {
+				.label = "Decomp Names (.txt)"
+				, .labelWidth = 180
+				, .filenameWidth = 200
+				, .extension = "txt"
+			};
+			if (g.isDecompMode)
+			{
+				if (wowGui_fileDropper(&decompFileNamesFile))
+				{
+					if (z64font_loadDecompFileNames(&g, decompFileNamesFile.filename))
+					{
+						free(decompFileNamesFile.filename);
+						decompFileNamesFile.filename = "";
+					}
+					changed = 1;
+				}
+			}
 			
 			wowGui_column_width(64);
 			wowGui_columns(6);
@@ -240,16 +260,29 @@ int wow_main(argc, argv)
 			
 			wowGui_column_width(128 + 8);
 			
-			if (wowGui_button("Export Binaries"))
+			if (wowGui_button(g.isDecompMode ? "Export Decomp" : "Export Binaries"))
 			{
 				if (previewOn)
 				{
 					char *ofn = 0;
-					ofn = wowGui_askFilename("font_static", 0, 1);
-					if (ofn)
+
+					if (g.isDecompMode)
 					{
-						z64font_exportBinaries(&g, &ofn);
-						free(ofn);
+						ofn = wowGui_askFilename("font_width.h", 0, 1);
+						if (ofn)
+						{
+							z64font_exportDecomp(&g, &ofn);
+							free(ofn);
+						}
+					}
+					else
+					{
+						ofn = wowGui_askFilename("font_static", 0, 1);
+						if (ofn)
+						{
+							z64font_exportBinaries(&g, &ofn);
+							free(ofn);
+						}
 					}
 				}
 			}

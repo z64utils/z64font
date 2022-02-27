@@ -19,13 +19,7 @@ Here are the latest codepoint files (simply `Ctrl + S` in your browser):
  - [Ocarina of Time codepoints](https://raw.githubusercontent.com/z64me/z64font/main/codepoints/oot.txt)
  - [Majora's Mask codepoints](https://raw.githubusercontent.com/z64me/z64font/main/codepoints/mm.txt)
 
-You can use your scroll wheel to effortlessly tweak each control. Once
-you are happy with how your font is displaying in the preview window,
-click the `Export Binaries` button. You will be prompted to select a
-location and filename for them. Let's assume you chose the name `wow`.
-
-Once you have done that, two files will be generated: `wow.font_static`
-and `wow.font_width`.
+You can use your scroll wheel to effortlessly tweak each control.
 
 What you do next depends on your workflow.
 
@@ -37,6 +31,13 @@ TODO implement external font file support in zzrtl
 -->
 
 ### Traditional hackers
+
+Once you are happy with how your font is displaying in the preview window,
+click the `Export Binaries` button. You will be prompted to select a
+location and filename for them. Let's assume you chose the name `wow`.
+
+Once you have done that, two files will be generated: `wow.font_static`
+and `wow.font_width`.
 
 Inject the files into your decompressed game using a hex editor.
 For Windows users, I recommend [HxD](https://mh-nexus.de/en/hxd/).
@@ -50,8 +51,26 @@ For Windows users, I recommend [HxD](https://mh-nexus.de/en/hxd/).
 If you don't know how to decompress your copy of the game, look no
 further than [`z64decompress`](https://github.com/z64me/z64decompress).
 
-### [OoT decomp](https://github.com/zeldaret/oot) and [MM decomp](https://github.com/zeldaret/mm) users
+### [OoT decomp](https://github.com/zeldaret/oot)
+To export for OoT decomp first make sure `decompMode` is checked.
+You must provide a text file with the names of the png files to export. An [`oot_decomp_fn.txt`](https://raw.githubusercontent.com/z64me/z64font/main/codepoints/oot_decomp_fn.txt) is included already.
 
-The OoT/MM decomps will be made targetable as each finalizes
-its font handling.
+Once you are happy with how your font is displaying in the preview window,
+click the `Export Decomp` button. You will be prompted to select a
+location and filename for the export. Let's assume you chose the name `wow`.
 
+Once you have done that, a `.png` will be generated for every character, as well as a `wow.font_width.h`.
+
+To add all the textures to your decomp repository, navigate to `oot/assets/textures/nes_font_static`, and place all of the generated files in this folder, overwriting as necessary.
+
+Next, we need to update the spacing between each character. To do so, open `oot/src/code/z_message_PAL.c`, and find the [`sFontWidths`](https://github.com/zeldaret/oot/blob/master/src/code/z_message_PAL.c#L589) array. Next, replace the entire array with this:
+```c
+f32 sFontWidths[] = {
+#include "textures/nes_font_static/wow.font_width.h"
+};
+```
+
+Now `make clean && make` to compile the new font.
+
+### [MM decomp](https://github.com/zeldaret/mm) users
+The MM decomp will be made targetable once it finalizes its font handling.

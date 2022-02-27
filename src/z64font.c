@@ -16,6 +16,9 @@
 #define WOW_IMPLEMENTATION
 #include <wow.h>
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
 #define STB_TRUETYPE_IMPLEMENTATION
 
 #include "z64font.h"
@@ -165,6 +168,78 @@ static char *readFileString(struct z64font *g, const char *fn)
  *
  */
 
+
+void z64font_exportDecomp(struct z64font *g, char **ofn)
+{
+	FILE *fp = 0;
+	struct zchar *zchar;
+	const char *delim = "\r\n";
+	char *pngFn = 0;
+	char *decompFileNames = strdup(g->decompFileNames);
+	const float extraWidthEntries[] = {
+		14.0f, // '[A]'
+		14.0f, // '[B]'
+		14.0f, // '[C]'
+		14.0f, // '[L]'
+		14.0f, // '[R]'
+		14.0f, // '[Z]'
+		14.0f, // '[C-Up]'
+		14.0f, // '[C-Down]'
+		14.0f, // '[C-Left]'
+		14.0f, // '[C-Right]'
+		14.0f, // '▼'
+		14.0f, // '[Control-Pad]'
+		14.0f, // '[D-Pad]'
+		14.0f, // ?
+		14.0f, // ?
+		14.0f, // ?
+		14.0f, // ?
+	};
+	
+	if (!ofn || !*ofn || !decompFileNames)
+		return;
+
+	pngFn = strtok(decompFileNames, delim);
+
+	for (zchar = g->zchar; zchar->bitmap; ++zchar)
+	{
+		stbi_write_png(pngFn, FONT_W, FONT_H, 1, zchar->bitmap, FONT_W * 1);
+		pngFn = strtok(0, delim);
+	}
+
+	g->isI4 = 1; /* has converted to i4 */
+	
+	/* export 'comic-sans.font_width.h' */
+	fp = fopen(*ofn, "w");
+	if (!fp)
+	{
+		g->error("failed to open '%s' for writing\n", *ofn);
+		goto L_cleanup;
+	}
+	for (zchar = g->zchar; zchar->bitmap; ++zchar)
+	{
+		if (fprintf(fp, "%ff,\n", zchar->width) < 0)
+		{
+			g->error("failed to write '%s'\n", *ofn);
+			goto L_cleanup;
+		}
+	}
+	for (int i = 0; i < sizeof(extraWidthEntries) / sizeof(extraWidthEntries[0]); ++i)
+	{
+		if (fprintf(fp, "%ff,\n", extraWidthEntries[i]) < 0)
+		{
+			g->error("failed to write '%s'\n", *ofn);
+			goto L_cleanup;
+		}
+	}
+	fclose(fp);
+	fp = 0;
+	g->info("Export successful!\n");
+L_cleanup:
+	free(decompFileNames);
+	if (fp)
+		fclose(fp);
+}
 
 void z64font_exportBinaries(struct z64font *g, char **ofn)
 {
@@ -355,3 +430,18 @@ int z64font_loadCodepoints(struct z64font *g, const char *fn)
 	return 0;
 }
 
+int z64font_loadDecompFileNames(struct z64font *g, const char *fn)
+{
+	/* txt changed */
+	if (g->decompFileNames)
+		free(g->decompFileNames);
+	
+	if (!fn || !strlen(fn))
+		return 1;
+	
+	/* read characters as string */
+	if (!(g->decompFileNames = readFileString(g, fn)))
+		return 1;
+
+	return 0;
+}
