@@ -165,15 +165,15 @@ int wow_main(argc, argv)
 		};
 		if (wowGui_window(&win))
 		{
-            wowGui_row_height(20);
-            wowGui_columns(2);
-            
-            wowGui_column_width(WINW / 2);
-            wowGui_italic(2);
-            wowGui_label(PROG_NAME_VER_ATTRIB);
-            wowGui_italic(0);
+			wowGui_row_height(20);
+			wowGui_columns(2);
 
-          	wowGui_checkbox("decompMode", &g.isDecompMode);
+			wowGui_column_width(WINW / 2);
+			wowGui_italic(2);
+			wowGui_label(PROG_NAME_VER_ATTRIB);
+			wowGui_italic(0);
+
+			wowGui_checkbox("decompMode", &g.isDecompMode);
 
 			/* file droppers */
 			wowGui_columns(3);
