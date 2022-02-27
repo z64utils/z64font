@@ -198,13 +198,6 @@ void z64font_exportDecomp(struct z64font *g, char **ofn)
 	
 	if (!ofn || !*ofn || !decompFileNames)
 		return;
-	
-	/* export 'comic-sans.font_static' */
-	if (wow_fnChangeExtension(ofn, "font_static"))
-	{
-		g->error("memory error");
-		goto L_cleanup;
-	}
 
 	pngFn = strtok(decompFileNames, delim);
 
@@ -217,11 +210,6 @@ void z64font_exportDecomp(struct z64font *g, char **ofn)
 	g->isI4 = 1; /* has converted to i4 */
 	
 	/* export 'comic-sans.width_table.h' */
-	if (wow_fnChangeExtension(ofn, "width_table.h"))
-	{
-		g->error("memory error");
-		goto L_cleanup;
-	}
 	fp = fopen(*ofn, "w");
 	if (!fp)
 	{
