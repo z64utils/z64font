@@ -23,12 +23,14 @@ struct z64font
 	void *ttfBin;
 	unsigned ttfBinSz;
 	char *chars;
+	char* decompFileNames;
 	stbtt_fontinfo font;
 	int fontSize;
 	int yshift;
 	int xPad;
 	int rightToLeft;
 	int widthAdvance;
+	int isDecompMode;
 	struct zchar *zchar;
 	unsigned zcharNum;
 	char isI4;
@@ -44,8 +46,10 @@ struct z64font
 
 int z64font_convert(struct z64font *g);
 void z64font_exportBinaries(struct z64font *g, char **ofn);
+void z64font_exportDecomp(struct z64font *g, char **ofn);
 int z64font_loadFont(struct z64font *g, const char *fn);
 int z64font_loadCodepoints(struct z64font *g, const char *fn);
+int z64font_loadDecompFileNames(struct z64font *g, const char *fn);
 
 #endif
 
