@@ -215,6 +215,33 @@ void z64font_exportDecomp(struct z64font *g, char **ofn)
 			goto L_cleanup;
 		}
 	}
+	static float const extraWidthEntries[] = {
+		14.0f, // '[A]'
+		14.0f, // '[B]'
+		14.0f, // '[C]'
+		14.0f, // '[L]'
+		14.0f, // '[R]'
+		14.0f, // '[Z]'
+		14.0f, // '[C-Up]'
+		14.0f, // '[C-Down]'
+		14.0f, // '[C-Left]'
+		14.0f, // '[C-Right]'
+		14.0f, // '▼'
+		14.0f, // '[Control-Pad]'
+		14.0f, // '[D-Pad]'
+		14.0f, // ?
+		14.0f, // ?
+		14.0f, // ?
+		14.0f, // ?
+	};
+	for (int i = 0; i < sizeof(extraWidthEntries) / sizeof(extraWidthEntries[0]); ++i)
+	{
+		if (fprintf(fp, "%ff,\n", extraWidthEntries[i]) < 0)
+		{
+			g->error("failed to write '%s'\n", *ofn);
+			goto L_cleanup;
+		}
+	}
 	fclose(fp);
 	fp = 0;
 	g->info("Export successful!\n");
