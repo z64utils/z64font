@@ -10,7 +10,7 @@
 #define  FONT_H 16
 
 #define  PROGNAME    "z64font"
-#define  PROGVER     "v1.0.0"
+#define  PROGVER     "v1.1.0"
 #define  PROGATTRIB  "<z64.me>"
 #define  PROG_NAME_VER_ATTRIB    PROGNAME" "PROGVER" "PROGATTRIB
 #define  ZCHAR_MAX 4096   /* 4096 character slots is plenty */
