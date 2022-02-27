@@ -65,7 +65,7 @@ To add all the textures to your decomp repository, navigate to `oot/assets/textu
 
 Next, we need to update the spacing between each character. To do so, open `oot/src/code/z_message_PAL.c`, and find the [`sFontWidths`](https://github.com/zeldaret/oot/blob/master/src/code/z_message_PAL.c#L589) array. Next, replace the entire array with this:
 ```c
-f32 sFontWidths[144] = {
+f32 sFontWidths[] = {
 #include "textures/nes_font_static/wow.font_width.h"
 };
 ```
